@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__dart__pub",
+      "mcp__dart__run_tests",
+      "Bash(curl:*)",
+      "Bash(git checkout:*)",
+      "Bash(flutter test --help:*)",
+      "Bash(FLUTTER_TEST_FONT=Roboto flutter test:*)",
+      "Bash(flutter test:*)",
+      "Bash(dart run --help:*)",
+      "Bash(flutter --version:*)",
+      "mcp__dart__pub_dev_search",
+      "WebFetch(domain:pub.dev)",
+      "WebFetch(domain:github.com)",
+      "Bash(cat:*)",
+      "Bash(flutter pub get:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
