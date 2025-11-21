@@ -5,7 +5,8 @@ A Flutter project demonstrating the Composer pattern for dynamic widget composit
 ## Features
 
 - **Composer Pattern**: Define and recall widgets dynamically using a registry pattern
-- **Context System**: Type-safe context wrapper with fluent API for widget configuration
+- **Context System**: Type-safe context wrapper with runtime type checking and fluent API
+- **Runtime Type Safety**: TypeError thrown on type mismatches when retrieving context values
 - **Provider Integration**: Seamless integration with Flutter's Provider package
 - **Go Router**: Navigation setup using go_router
 - **Comprehensive Testing**: Unit tests, widget tests, and golden tests with proper font rendering
@@ -28,7 +29,7 @@ final widget = composer.recall('greeting', context: Context()..setName('Flutter'
 
 ### Context System
 
-Context is a wrapper around `Map<String, dynamic>` with extension methods for type-safe access:
+Context is a type-safe wrapper with runtime type checking via internal typed value storage. Extension methods provide a fluent API:
 
 ```dart
 final context = Context()
@@ -36,6 +37,10 @@ final context = Context()
   ..setTitle('Developer')
   ..setColors(ContextColors()..primary = Colors.blue)
   ..setSizes(ContextSizes()..lg = 24.0);
+
+// Type-safe retrieval - throws TypeError on mismatch
+final name = context.get<String>('name'); // OK
+final count = context.get<int>('name');   // Throws TypeError
 ```
 
 ### Singleton Management
@@ -126,10 +131,10 @@ flutter test test/composer/composer_golden_test.dart --update-goldens
 
 ## Testing
 
-The project includes comprehensive test coverage:
+The project includes comprehensive test coverage (49 tests total):
 
 - **Unit Tests**: 10 tests for Composer core functionality
-- **Context Tests**: 18 tests for Context system
+- **Context Tests**: 21 tests for Context system (including 3 type safety tests)
 - **Widget Tests**: 11 tests for widget composition
 - **Golden Tests**: 7 visual regression tests with real font rendering
 
