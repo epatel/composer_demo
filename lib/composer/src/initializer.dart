@@ -41,6 +41,9 @@ void initializeComposer() {
 
   composer.define(
     'spacing',
-    (context) => SizedBox(height: context.sizes.md),
+    (context) => SizedBox(
+      height: context.sizes.md,
+      width: context.sizes.md,
+    ),
   );
 }

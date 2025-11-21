@@ -1,11 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'router.dart';
-import 'package:flutter_composer/composer/composer.dart';
-import 'package:flutter_composer/providers/counter_provider.dart';
+import 'package:flutter_composer/index.dart';
 
 void main() {
   initializeComposer();
+  initializeItems();
   runApp(const MyApp());
 }
 
@@ -19,7 +16,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         title: 'Flutter Demo',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.deepPurple,
+          ),
         ),
         routerConfig: router,
       ),

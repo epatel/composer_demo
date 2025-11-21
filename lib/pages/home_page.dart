@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_composer/composer/composer.dart';
-import 'package:flutter_composer/providers/counter_provider.dart';
+import 'package:flutter_composer/index.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key, required this.title});
@@ -18,7 +15,12 @@ class HomePage extends StatelessWidget {
       body: ProvideContext(
         context: Context()
           ..setTitle('** Title **')
-          ..setName('Flutter'),
+          ..setName('Flutter')
+          ..setItems([
+            Item('Item 1'),
+            Item('Item 2'),
+            Item('Item 3'),
+          ]),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -36,6 +38,7 @@ class HomePage extends StatelessWidget {
               composer.greeting(),
               composer.recallSpacing(),
               composer.info(),
+              composer.recall('list:items'),
             ],
           ),
         ),
