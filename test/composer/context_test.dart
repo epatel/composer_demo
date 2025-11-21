@@ -5,7 +5,7 @@ void main() {
   group('Context', () {
     test('should create empty context', () {
       final context = Context.empty();
-      expect(context.data.isEmpty, true);
+      expect(context.isEmpty, true);
       expect(context.parent, null);
     });
 
@@ -21,11 +21,13 @@ void main() {
     });
 
     test('should get typed values', () {
-      final context = Context(data: {
-        'name': 'Flutter',
-        'count': 42,
-        'isActive': true,
-      });
+      final context = Context(
+        data: {
+          'name': 'Flutter',
+          'count': 42,
+          'isActive': true,
+        },
+      );
 
       expect(context.get<String>('name'), 'Flutter');
       expect(context.get<int>('count'), 42);
@@ -51,6 +53,30 @@ void main() {
       final child = Context(data: {'key': 'child value'}, parent: parent);
 
       expect(child['key'], 'child value');
+    });
+
+    test('should throw TypeError when getting wrong type', () {
+      final context = Context();
+      context['name'] = 'Flutter';
+
+      expect(() => context.get<int>('name'), throwsA(isA<TypeError>()));
+    });
+
+    test('should allow correct type retrieval', () {
+      final context = Context();
+      context['name'] = 'Flutter';
+      context['count'] = 42;
+
+      expect(context.get<String>('name'), 'Flutter');
+      expect(context.get<int>('count'), 42);
+    });
+
+    test('should handle type checking with parent context', () {
+      final parent = Context(data: {'parentValue': 'text'});
+      final child = Context(parent: parent);
+
+      expect(child.get<String>('parentValue'), 'text');
+      expect(() => child.get<int>('parentValue'), throwsA(isA<TypeError>()));
     });
   });
 

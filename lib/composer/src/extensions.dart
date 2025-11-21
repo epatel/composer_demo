@@ -15,14 +15,15 @@ class ContextColors {
 }
 
 extension ContextExtensions on Context {
-  void setText(String text) => data['text'] = text;
-  void setName(String name) => data['name'] = name;
-  void setTitle(String title) => data['title'] = title;
-  void setCount(int count) => data['count'] = count;
-  void setIsActive(bool isActive) => data['isActive'] = isActive;
-  void setData(Map<String, dynamic> newData) => data.addAll(newData);
-  void setSizes(ContextSizes sizes) => data['sizes'] = sizes;
-  void setColors(ContextColors colors) => data['colors'] = colors;
+  void setText(String text) => this['text'] = text;
+  void setName(String name) => this['name'] = name;
+  void setTitle(String title) => this['title'] = title;
+  void setCount(int count) => this['count'] = count;
+  void setIsActive(bool isActive) => this['isActive'] = isActive;
+  void setData(Map<String, dynamic> newData) =>
+      newData.forEach((key, value) => this[key] = value);
+  void setSizes(ContextSizes sizes) => this['sizes'] = sizes;
+  void setColors(ContextColors colors) => this['colors'] = colors;
 
   String? get text => get<String>('text');
   String? get name => get<String>('name');

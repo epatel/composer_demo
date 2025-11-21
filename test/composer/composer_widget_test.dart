@@ -88,8 +88,9 @@ void main() {
       expect(find.text('Hello Test'), findsOneWidget);
     });
 
-    testWidgets('should compose widgets that recall other widgets',
-        (tester) async {
+    testWidgets('should compose widgets that recall other widgets', (
+      tester,
+    ) async {
       composer.define('text', (context) {
         return Text(context.text ?? '<Missing text>');
       });
@@ -171,8 +172,9 @@ void main() {
       expect(find.text('Count: 5'), findsOneWidget);
     });
 
-    testWidgets('ProvideContext should provide context to descendants',
-        (tester) async {
+    testWidgets('ProvideContext should provide context to descendants', (
+      tester,
+    ) async {
       final testContext = Context()..setName('Provided Name');
 
       await tester.pumpWidget(
