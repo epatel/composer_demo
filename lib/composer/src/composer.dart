@@ -5,12 +5,6 @@ import 'context.dart';
 typedef WidgetBuilder = Widget Function(Context context);
 
 class Composer {
-  static Composer _instance = Composer._internal();
-
-  factory Composer() => _instance;
-
-  Composer._internal();
-
   final Map<String, WidgetBuilder> _definitions = {};
 
   void define(String name, WidgetBuilder builder) {
@@ -39,11 +33,8 @@ class Composer {
   }
 
   List<String> get definedNames => List.unmodifiable(_definitions.keys);
-
-  @visibleForTesting
-  static void resetForTest() {
-    _instance = Composer._internal();
-  }
 }
 
-final Composer composer = Composer();
+extension ComposerBuildContextExtensions on BuildContext {
+  Composer get composer => read<Composer>();
+}

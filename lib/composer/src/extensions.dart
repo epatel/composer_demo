@@ -37,8 +37,3 @@ extension ContextExtensions on Context {
 extension ContextListExtensions<T> on Context {
   List<T> get list => get<List<T>>('list') ?? [];
 }
-
-extension ComposerExtensions on Composer {
-  Widget greeting() => recall('greeting');
-  Widget info() => recall('info');
-}

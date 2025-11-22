@@ -1,8 +1,6 @@
 import 'package:flutter_composer/index.dart';
 
 void main() {
-  initializeComposer();
-  initializeItems();
   runApp(const MyApp());
 }
 
@@ -11,8 +9,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => CounterProvider(),
+    final composer = context.read<Composer>();
+    initializeComposer(composer);
+
+    return MultiProvider(
+      providers: [
+        Provider<Composer>.value(value: composer),
+        ChangeNotifierProvider(create: (_) => CounterProvider()),
+      ],
       child: MaterialApp.router(
         title: 'Flutter Demo',
         theme: ThemeData(

@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_composer/composer/composer.dart';
+import 'package:flutter_composer/data/initilizers.dart';
+import 'package:flutter_composer/data/extensions.dart';
 
 void main() {
-  setUp(() {
-    Composer.resetForTest();
-  });
-
   group('Composer Widget Tests', () {
+    late Composer composer;
+
+    setUp(() {
+      composer = Composer();
+    });
     testWidgets('should recall widget with explicit context', (tester) async {
       composer.define('greeting', (context) {
         return Text('Hello ${context.name ?? "World"}');
@@ -17,9 +20,12 @@ void main() {
       final testContext = Context()..setName('Flutter');
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: composer.recall('greeting', context: testContext),
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            home: Scaffold(
+              body: composer.recall('greeting', context: testContext),
+            ),
           ),
         ),
       );
@@ -35,11 +41,14 @@ void main() {
       final testContext = Context()..setTitle('Test Title');
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProvideContext(
-              context: testContext,
-              child: composer.recall('info'),
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            home: Scaffold(
+              body: ProvideContext(
+                context: testContext,
+                child: composer.recall('info'),
+              ),
             ),
           ),
         ),
@@ -57,9 +66,12 @@ void main() {
       final child = Context(parent: parent)..setTitle('Child Title');
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: composer.recall('display', context: child),
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            home: Scaffold(
+              body: composer.recall('display', context: child),
+            ),
           ),
         ),
       );
@@ -75,11 +87,14 @@ void main() {
       final testContext = Context()..setName('Test');
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProvideContext(
-              context: testContext,
-              child: composer.greeting(),
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            home: Scaffold(
+              body: ProvideContext(
+                context: testContext,
+                child: composer.greeting(),
+              ),
             ),
           ),
         ),
@@ -108,9 +123,12 @@ void main() {
       });
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: composer.recall('card', context: Context()),
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            home: Scaffold(
+              body: composer.recall('card', context: Context()),
+            ),
           ),
         ),
       );
@@ -131,9 +149,12 @@ void main() {
       });
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: composer.recall('styled', context: Context()),
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            home: Scaffold(
+              body: composer.recall('styled', context: Context()),
+            ),
           ),
         ),
       );
@@ -149,14 +170,17 @@ void main() {
       final testContext = Context()..setCount(0);
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProvideContext(
-              context: testContext,
-              child: Consumer<Context>(
-                builder: (context, ctx, child) {
-                  return Text('Count: ${ctx.count ?? 0}');
-                },
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            home: Scaffold(
+              body: ProvideContext(
+                context: testContext,
+                child: Consumer<Context>(
+                  builder: (context, ctx, child) {
+                    return Text('Count: ${ctx.count ?? 0}');
+                  },
+                ),
               ),
             ),
           ),
@@ -178,15 +202,18 @@ void main() {
       final testContext = Context()..setName('Provided Name');
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProvideContext(
-              context: testContext,
-              child: Builder(
-                builder: (buildContext) {
-                  final ctx = buildContext.read<Context>();
-                  return Text(ctx.name ?? 'No name');
-                },
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            home: Scaffold(
+              body: ProvideContext(
+                context: testContext,
+                child: Builder(
+                  builder: (buildContext) {
+                    final ctx = buildContext.read<Context>();
+                    return Text(ctx.name ?? 'No name');
+                  },
+                ),
               ),
             ),
           ),
@@ -202,9 +229,12 @@ void main() {
       });
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: composer.recall('safe', context: Context()),
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            home: Scaffold(
+              body: composer.recall('safe', context: Context()),
+            ),
           ),
         ),
       );
@@ -214,24 +244,32 @@ void main() {
   });
 
   group('Initializer Tests', () {
-    testWidgets('initialized widgets should work', (tester) async {
-      initializeComposer();
+    late Composer composer;
 
+    setUp(() {
+      composer = Composer();
+      initializeComposer(composer);
+    });
+
+    testWidgets('initialized widgets should work', (tester) async {
       final testContext = Context()
         ..setName('Flutter')
         ..setTitle('Composer');
 
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProvideContext(
-              context: testContext,
-              child: Column(
-                children: [
-                  composer.greeting(),
-                  composer.info(),
-                  composer.recallSpacing(),
-                ],
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            home: Scaffold(
+              body: ProvideContext(
+                context: testContext,
+                child: Column(
+                  children: [
+                    composer.greeting(),
+                    composer.info(),
+                    composer.recallSpacing(),
+                  ],
+                ),
               ),
             ),
           ),
@@ -244,14 +282,15 @@ void main() {
     });
 
     testWidgets('recallText should work with custom text', (tester) async {
-      initializeComposer();
-
       await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProvideContext(
-              context: Context(),
-              child: composer.recallText('Custom Text'),
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            home: Scaffold(
+              body: ProvideContext(
+                context: Context(),
+                child: composer.recallText('Custom Text'),
+              ),
             ),
           ),
         ),

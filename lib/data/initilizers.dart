@@ -1,18 +1,6 @@
-import 'package:flutter/material.dart';
-import 'composer.dart';
-import 'context.dart';
-import 'extensions.dart';
+import 'package:flutter_composer/index.dart';
 
-extension InitializerComposerExtensions on Composer {
-  Widget recallText(String text) => recall(
-    'text',
-    context: Context()..setText(text),
-  );
-
-  Widget recallSpacing() => recall('spacing');
-}
-
-void initializeComposer() {
+void initializeComposer(Composer composer) {
   composer.define(
     'text',
     (context) => Text(
@@ -45,5 +33,21 @@ void initializeComposer() {
       height: context.sizes.md,
       width: context.sizes.md,
     ),
+  );
+
+  composer.define(
+    'list:items',
+    (context) {
+      final items = context.items;
+      return ListView.builder(
+        shrinkWrap: true,
+        itemCount: items.length,
+        itemBuilder: (_, index) => ListTile(
+          title: Text(
+            items[index].name,
+          ),
+        ),
+      );
+    },
   );
 }

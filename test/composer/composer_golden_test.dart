@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_composer/composer/composer.dart';
+import 'package:flutter_composer/data/initilizers.dart';
+import 'package:flutter_composer/data/extensions.dart';
 
 void main() {
+  late Composer composer;
+
   setUp(() {
-    Composer.resetForTest();
-    initializeComposer();
+    composer = Composer();
+    initializeComposer(composer);
   });
 
   group('Golden Tests - Text Widget', () {
     testWidgets('text widget with default styling', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(fontFamily: 'Roboto'),
-          home: Scaffold(
-            body: Center(
-              child: ProvideContext(
-                context: Context()..setText('Hello Golden Test'),
-                child: composer.recallText('Hello Golden Test'),
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            theme: ThemeData(fontFamily: 'Roboto'),
+            home: Scaffold(
+              body: Center(
+                child: ProvideContext(
+                  context: Context()..setText('Hello Golden Test'),
+                  child: composer.recallText('Hello Golden Test'),
+                ),
               ),
             ),
           ),
@@ -37,15 +45,18 @@ void main() {
         ..accent = Colors.blue;
 
       await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(fontFamily: 'Roboto'),
-          home: Scaffold(
-            body: Center(
-              child: ProvideContext(
-                context: Context()
-                  ..setText('Colored Text')
-                  ..setColors(customColors),
-                child: composer.recallText('Colored Text'),
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            theme: ThemeData(fontFamily: 'Roboto'),
+            home: Scaffold(
+              body: Center(
+                child: ProvideContext(
+                  context: Context()
+                    ..setText('Colored Text')
+                    ..setColors(customColors),
+                  child: composer.recallText('Colored Text'),
+                ),
               ),
             ),
           ),
@@ -62,13 +73,16 @@ void main() {
   group('Golden Tests - Greeting Widget', () {
     testWidgets('greeting widget with name', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(fontFamily: 'Roboto'),
-          home: Scaffold(
-            body: Center(
-              child: ProvideContext(
-                context: Context()..setName('Flutter'),
-                child: composer.greeting(),
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            theme: ThemeData(fontFamily: 'Roboto'),
+            home: Scaffold(
+              body: Center(
+                child: ProvideContext(
+                  context: Context()..setName('Flutter'),
+                  child: composer.greeting(),
+                ),
               ),
             ),
           ),
@@ -83,13 +97,16 @@ void main() {
 
     testWidgets('greeting widget without name', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(fontFamily: 'Roboto'),
-          home: Scaffold(
-            body: Center(
-              child: ProvideContext(
-                context: Context(),
-                child: composer.greeting(),
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            theme: ThemeData(fontFamily: 'Roboto'),
+            home: Scaffold(
+              body: Center(
+                child: ProvideContext(
+                  context: Context(),
+                  child: composer.greeting(),
+                ),
               ),
             ),
           ),
@@ -106,13 +123,16 @@ void main() {
   group('Golden Tests - Info Widget', () {
     testWidgets('info widget with title', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(fontFamily: 'Roboto'),
-          home: Scaffold(
-            body: Center(
-              child: ProvideContext(
-                context: Context()..setTitle('Composer Pattern'),
-                child: composer.info(),
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            theme: ThemeData(fontFamily: 'Roboto'),
+            home: Scaffold(
+              body: Center(
+                child: ProvideContext(
+                  context: Context()..setTitle('Composer Pattern'),
+                  child: composer.info(),
+                ),
               ),
             ),
           ),
@@ -129,23 +149,26 @@ void main() {
   group('Golden Tests - Full Composition', () {
     testWidgets('full composition with all widgets', (tester) async {
       await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(fontFamily: 'Roboto'),
-          home: Scaffold(
-            body: Center(
-              child: ProvideContext(
-                context: Context()
-                  ..setName('Flutter Developer')
-                  ..setTitle('Golden Test Example'),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    composer.greeting(),
-                    composer.recallSpacing(),
-                    composer.info(),
-                    composer.recallSpacing(),
-                    composer.recallText('Additional text'),
-                  ],
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            theme: ThemeData(fontFamily: 'Roboto'),
+            home: Scaffold(
+              body: Center(
+                child: ProvideContext(
+                  context: Context()
+                    ..setName('Flutter Developer')
+                    ..setTitle('Golden Test Example'),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      composer.greeting(),
+                      composer.recallSpacing(),
+                      composer.info(),
+                      composer.recallSpacing(),
+                      composer.recallText('Additional text'),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -171,24 +194,27 @@ void main() {
         ..lg = 36.0;
 
       await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(fontFamily: 'Roboto'),
-          home: Scaffold(
-            backgroundColor: Colors.grey[100],
-            body: Center(
-              child: ProvideContext(
-                context: Context()
-                  ..setName('Styled User')
-                  ..setTitle('Custom Theme')
-                  ..setColors(customColors)
-                  ..setSizes(customSizes),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    composer.greeting(),
-                    composer.recallSpacing(),
-                    composer.info(),
-                  ],
+        Provider<Composer>.value(
+          value: composer,
+          child: MaterialApp(
+            theme: ThemeData(fontFamily: 'Roboto'),
+            home: Scaffold(
+              backgroundColor: Colors.grey[100],
+              body: Center(
+                child: ProvideContext(
+                  context: Context()
+                    ..setName('Styled User')
+                    ..setTitle('Custom Theme')
+                    ..setColors(customColors)
+                    ..setSizes(customSizes),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      composer.greeting(),
+                      composer.recallSpacing(),
+                      composer.info(),
+                    ],
+                  ),
                 ),
               ),
             ),
