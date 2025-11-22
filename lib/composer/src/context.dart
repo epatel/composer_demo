@@ -6,6 +6,26 @@ class _TypedValue<T> {
   const _TypedValue(this.value);
 }
 
+/// Error thrown when attempting to retrieve a value from Context with a type
+/// that doesn't match the stored value's type.
+class ContextTypeMismatchError extends Error {
+  /// The key that was accessed
+  final String key;
+  
+  /// The type that was expected (requested by the caller)
+  final Type expectedType;
+  
+  /// The actual type of the stored value
+  final Type actualType;
+
+  ContextTypeMismatchError(this.key, this.expectedType, this.actualType);
+
+  @override
+  String toString() =>
+      'ContextTypeMismatchError: Type mismatch for key "$key": '
+      'expected $expectedType but got $actualType';
+}
+
 class Context extends ChangeNotifier {
   final Context? parent;
   final Map<String, _TypedValue> _data;
@@ -32,7 +52,7 @@ class Context extends ChangeNotifier {
     if (value != null) {
       final unwrapped = value.value;
       if (unwrapped is! T && unwrapped != null) {
-        throw TypeError();
+        throw ContextTypeMismatchError(key, T, unwrapped.runtimeType);
       }
       return unwrapped as T?;
     }

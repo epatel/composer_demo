@@ -55,11 +55,12 @@ void main() {
       expect(child['key'], 'child value');
     });
 
-    test('should throw TypeError when getting wrong type', () {
+    test('should throw ContextTypeMismatchError when getting wrong type', () {
       final context = Context();
       context['name'] = 'Flutter';
 
-      expect(() => context.get<int>('name'), throwsA(isA<TypeError>()));
+      expect(() => context.get<int>('name'), 
+        throwsA(isA<ContextTypeMismatchError>()));
     });
 
     test('should allow correct type retrieval', () {
@@ -76,7 +77,28 @@ void main() {
       final child = Context(parent: parent);
 
       expect(child.get<String>('parentValue'), 'text');
-      expect(() => child.get<int>('parentValue'), throwsA(isA<TypeError>()));
+      expect(() => child.get<int>('parentValue'), 
+        throwsA(isA<ContextTypeMismatchError>()));
+    });
+
+    test('should provide helpful error message on type mismatch', () {
+      final context = Context();
+      context['name'] = 'Flutter';
+
+      try {
+        context.get<int>('name');
+        fail('Should have thrown ContextTypeMismatchError');
+      } catch (e) {
+        expect(e, isA<ContextTypeMismatchError>());
+        final error = e as ContextTypeMismatchError;
+        expect(error.key, 'name');
+        expect(error.expectedType, int);
+        expect(error.actualType, String);
+        expect(error.toString(), 
+          contains('Type mismatch for key "name"'));
+        expect(error.toString(), contains('expected int'));
+        expect(error.toString(), contains('but got String'));
+      }
     });
   });
 
