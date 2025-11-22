@@ -50,4 +50,24 @@ void initializeComposer(Composer composer) {
       );
     },
   );
+
+  composer.define(
+    'column',
+    (context) => Column(
+      spacing: context.sizes.md,
+      children: context.get<List<Widget>>('children') ?? [],
+    ),
+  );
+
+  composer.define(
+    'counter',
+    (context) => Builder(
+      builder: (context) {
+        final counter = context.select(
+          (Context context) => context.counter,
+        );
+        return composer.recallText('$counter');
+      },
+    ),
+  );
 }

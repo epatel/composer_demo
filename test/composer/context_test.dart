@@ -59,8 +59,10 @@ void main() {
       final context = Context();
       context['name'] = 'Flutter';
 
-      expect(() => context.get<int>('name'), 
-        throwsA(isA<ContextTypeMismatchError>()));
+      expect(
+        () => context.get<int>('name'),
+        throwsA(isA<ContextTypeMismatchError>()),
+      );
     });
 
     test('should allow correct type retrieval', () {
@@ -77,8 +79,10 @@ void main() {
       final child = Context(parent: parent);
 
       expect(child.get<String>('parentValue'), 'text');
-      expect(() => child.get<int>('parentValue'), 
-        throwsA(isA<ContextTypeMismatchError>()));
+      expect(
+        () => child.get<int>('parentValue'),
+        throwsA(isA<ContextTypeMismatchError>()),
+      );
     });
 
     test('should provide helpful error message on type mismatch', () {
@@ -94,8 +98,7 @@ void main() {
         expect(error.key, 'name');
         expect(error.expectedType, int);
         expect(error.actualType, String);
-        expect(error.toString(), 
-          contains('Type mismatch for key "name"'));
+        expect(error.toString(), contains('Type mismatch for key "name"'));
         expect(error.toString(), contains('expected int'));
         expect(error.toString(), contains('but got String'));
       }
@@ -168,6 +171,151 @@ void main() {
       expect(context.name, 'Flutter');
       expect(context.title, 'Title');
       expect(context.count, 5);
+    });
+  });
+
+  group('Context Transactions', () {
+    test('should batch updates within a transaction', () {
+      final context = Context();
+      int notificationCount = 0;
+
+      context.addListener(() {
+        notificationCount++;
+      });
+
+      context.begin();
+      context['name'] = 'John';
+      context['age'] = 30;
+      context['city'] = 'NYC';
+      context.end();
+
+      expect(context['name'], 'John');
+      expect(context['age'], 30);
+      expect(context['city'], 'NYC');
+      expect(notificationCount, 1);
+    });
+
+    test('should notify listeners immediately when not in transaction', () {
+      final context = Context();
+      int notificationCount = 0;
+
+      context.addListener(() {
+        notificationCount++;
+      });
+
+      context['name'] = 'John';
+      context['age'] = 30;
+      context['city'] = 'NYC';
+
+      expect(notificationCount, 3);
+    });
+
+    test('should throw error when end() is called without begin()', () {
+      final context = Context();
+
+      expect(
+        () => context.end(),
+        throwsA(isA<ContextTransactionError>()),
+      );
+    });
+
+    test('should provide helpful error message for transaction error', () {
+      final context = Context();
+
+      try {
+        context.end();
+        fail('Should have thrown ContextTransactionError');
+      } catch (e) {
+        expect(e, isA<ContextTransactionError>());
+        final error = e as ContextTransactionError;
+        expect(
+          error.toString(),
+          contains('end() called without matching begin()'),
+        );
+      }
+    });
+
+    test('should reset transaction state after end()', () {
+      final context = Context();
+      int notificationCount = 0;
+
+      context.addListener(() {
+        notificationCount++;
+      });
+
+      // First transaction
+      context.begin();
+      context['name'] = 'John';
+      context.end();
+      expect(notificationCount, 1);
+
+      // Update outside transaction
+      context['age'] = 30;
+      expect(notificationCount, 2);
+
+      // Second transaction
+      context.begin();
+      context['city'] = 'NYC';
+      context.end();
+      expect(notificationCount, 3);
+    });
+
+    test('should handle multiple consecutive transactions', () {
+      final context = Context();
+      int notificationCount = 0;
+
+      context.addListener(() {
+        notificationCount++;
+      });
+
+      context.begin();
+      context['value1'] = 'a';
+      context.end();
+
+      context.begin();
+      context['value2'] = 'b';
+      context.end();
+
+      context.begin();
+      context['value3'] = 'c';
+      context.end();
+
+      expect(notificationCount, 3);
+      expect(context['value1'], 'a');
+      expect(context['value2'], 'b');
+      expect(context['value3'], 'c');
+    });
+
+    test('should allow empty transactions', () {
+      final context = Context();
+      int notificationCount = 0;
+
+      context.addListener(() {
+        notificationCount++;
+      });
+
+      context.begin();
+      context.end();
+
+      // Should still notify even if no updates were made
+      expect(notificationCount, 1);
+    });
+
+    test('should work with typed get during transaction', () {
+      final context = Context();
+
+      context.begin();
+      context['name'] = 'Flutter';
+      context['count'] = 42;
+
+      // Should be able to get values during transaction
+      expect(context.get<String>('name'), 'Flutter');
+      expect(context.get<int>('count'), 42);
+
+      context.end();
+
+      expect(context.get<String>('name'), 'Flutter');
+      expect(context.get<int>('count'), 42);
     });
   });
 }

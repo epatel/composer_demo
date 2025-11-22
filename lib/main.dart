@@ -15,7 +15,6 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         Provider<Composer>.value(value: composer),
-        ChangeNotifierProvider(create: (_) => CounterProvider()),
       ],
       child: MaterialApp.router(
         title: 'Flutter Demo',

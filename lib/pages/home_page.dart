@@ -8,46 +8,45 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final composer = context.composer;
-
+    final dataContext = Context()
+      ..begin()
+      ..setTitle('** Title **')
+      ..setName('Flutter')
+      ..setCounter(0)
+      ..setItems([
+        Item('Item 1'),
+        Item('Item 2'),
+        Item('Item 3'),
+      ])
+      ..end();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(title),
       ),
       body: ProvideContext(
-        context: Context()
-          ..setTitle('** Title **')
-          ..setName('Flutter')
-          ..setItems([
-            Item('Item 1'),
-            Item('Item 2'),
-            Item('Item 3'),
-          ]),
+        context: dataContext,
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('You have pushed the button this many times:'),
-              Consumer<CounterProvider>(
-                builder: (context, counterProvider, child) {
-                  return Text(
-                    '${counterProvider.counter}',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  );
-                },
+          child: composer.recall(
+            'column',
+            context: Context()
+              ..setChildren(
+                [
+                  composer.recallText(
+                    'You have pushed the button this many times:',
+                  ),
+                  composer.counter(),
+                  composer.greeting(),
+                  composer.info(),
+                  composer.recall('list:items'),
+                ],
               ),
-              composer.recallSpacing(),
-              composer.greeting(),
-              composer.recallSpacing(),
-              composer.info(),
-              composer.recall('list:items'),
-            ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          context.read<CounterProvider>().increment();
+          dataContext.incrementCounter();
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
