@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final composer = context.read<Composer>();
+    final composer = Composer();
     initializeComposer(composer);
 
     return MultiProvider(
